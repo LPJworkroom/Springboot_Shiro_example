@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace = "com.example.demo.mapper.BedMapper">
+    <resultMap id = "bed" type = "com.example.demo.model.Bed">
+        <result property = "id" column = "id"/>
+        <result property = "roomNumber" column = "room_number"/>
+        <result property="bedStatus" column="bed_status"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <select id="getCount" resultType="int">
+        select count(*) cnt
+        from bed
+    </select>
+
+    <select id="getPage" resultMap="bed">
+        select * from bed
+        limit #{limit}
+        offset #{offset}
+    </select>
+
+    <select id="getById" parameterType="int" resultMap="bed">
+        select *
+        from bed
+        where id=#{id}
+    </select>
+
+    <select id = "getAll" resultMap = "bed">
+        SELECT * FROM bed;
+    </select>
+
+    <insert id="create" useGeneratedKeys="true" parameterType="com.example.demo.model.Bed">
+        insert into
+        bed(room_number)
+        values(#{roomNumber})
+    </insert>
+
+    <update id="update" parameterType="com.example.demo.model.Bed">
+        update bed
+        set room_number=(#{roomNumber}),bed_status=(#{bedStatus}),is_deleted=(#{isDeleted})
+        where id=(#{id})
+    </update>
+</mapper>

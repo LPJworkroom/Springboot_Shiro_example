@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lpjworkroom.new_buddyoj_backend.dao.UserMapper">
+    <resultMap id="userResult" type="User">
+        <collection property="roles" javaType="List" ofType="String" select="getUserRoles" column="id"></collection>
+        <collection property="permissions" javaType="List" ofType="String" select="getUserPermissions" column="id"></collection>
+    </resultMap>
+
+    <select id="getUserRoles" resultType="String" parameterType="int">
+        select role
+        from user_roles
+        where user_id=#{userId}
+    </select>
+
+    <select id="getUserPermissions" resultType="String" parameterType="int">
+        select permission
+        from user_permissions
+        where user_id=#{userId}
+    </select>
+
+    <insert id="create" useGeneratedKeys="true" parameterType="User">
+        BEGIN;
+        insert into
+            user(username,password)
+            values (#{username},#{password});
+        insert into
+            user_roles(user_id,role)
+            values
+            <foreach collection="roles" separator="," item="item">
+                (LAST_INSERT_ID(),#{item})
+            </foreach>
+            ;
+        insert into
+            user_permissions(user_id,permission)
+            values
+            <foreach collection="permissions" separator="," item="item">
+                (LAST_INSERT_ID(),#{item})
+            </foreach>
+            ;
+        COMMIT;
+    </insert>
+
+    <select id="getByName" resultMap="userResult" parameterType="String">
+        select id,username,password
+        from user
+        where username=#{name}
+    </select>
+</mapper>
